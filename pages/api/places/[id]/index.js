@@ -26,7 +26,7 @@ import Place from '@/db/models/Place';
 export default async function handler(request, response) {
 	await dbConnect();
 
-	const { id } = request.query;
+	const { id } = request.query;console.log(id)
 
 	switch (request.method) {
 		case 'GET':
@@ -46,7 +46,7 @@ export default async function handler(request, response) {
 			return response.status(200).json({ status: 'Place updated' });
 
 		case 'DELETE':
-			await Product.findByIdAndDelete(id);
+			await Place.findByIdAndDelete(id);
 
 			return response.status(200).json({ status: 'Place deleted' });
 
