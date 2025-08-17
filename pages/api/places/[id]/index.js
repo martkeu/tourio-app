@@ -15,42 +15,60 @@
 
 import dbConnect from '@/db/connect';
 import Place from '@/db/models/Place';
+import Comment from '@/db/models/Comment';
 
 /*---------------------------------------------------------------------------------
-| DB-Verbindung (GET/PUT/DELETE-Request)
+| Routen-Handling für GET/PUT/DELETE-Request
 |----------------------------------------------------------------------------------
-| - GET + Place.findById(id): ruft einen Eintrag der DB ab
-| - PUT + Place.findByIdAndUpdate(id, data): ändert einen Eintrag in der DB
-| - DELETE + Place.findByIdAndDelete(id): löscht einen Eintrag in der DB
+| GET:
+| - Client/Frontend  : useSWR('api/places/${id}') triggert GET-Request (-->places/[id]/index.js)
+| - ServerAPI/Backend: Abrufen eines DB-Eintrags mit Model.findById(id),
+|                      Response des Eintrags im JSON-Format an den Client
+| PUT:
+| - Client/Frontend  : handleEditPlace() triggert PUT-Request (-->places/[id]/edit.js)
+| - ServerAPI/Backend: Ändern eines DB-Eintrags mit Model.findByIdAndUpdate(id, data),
+|                      Response an den Client
+| DELETE:
+| - Client/Frontend  : deletePlace() triggert DELETE-Request (-->places/[id]/index.js)
+| - ServerAPI/Backend: - Löschen eines DB-Eintrags mit Model.findByIdAndDelete(id),
+|                      - Löschen aller Kommentare zu diesem DB-Eintrag mit Model.deleteMany()
+|                      Response an den Client
 */
 export default async function handler(request, response) {
 	await dbConnect();
 
-	const { id } = request.query;console.log(id)
+	const { id } = request.query;
 
 	switch (request.method) {
-		case 'GET':
-			const place = await Place.findById(id).populate('comments');
+      case 'GET':
+         // const place = await Place.findById(id).populate('comments');
+         const place = await Place.findById(id);
 
-			if (!place) {
-				return response.status(404).json({ status: 'Place not Found' });
-			}
+         if (!place) {
+            response.status(404).json({ message: 'Place not Found' });
+            return;
+         }
 
-			return response.status(200).json(place);
-
+         response.status(200).json(place);
+         break;
+      
 		case 'PUT':
 			const placeData = request.body;
 
 			await Place.findByIdAndUpdate(id, placeData);
 
-			return response.status(200).json({ status: 'Place updated' });
-
+			response.status(200).json({ message: 'Place updated' });
+         break;
+      
 		case 'DELETE':
-			await Place.findByIdAndDelete(id);
+         await Place.findByIdAndDelete(id);
+         
+         await Comment.deleteMany({ placeId: id }); //Kommentare zum Place löschen!!
 
-			return response.status(200).json({ status: 'Place deleted' });
-
+			response.status(200).json({ message: 'Place deleted' });
+         break;
+      
 		default:
-			response.status(405).json({ status: 'Method not allowed' });
+			response.status(405).json({ message: 'Method not allowed' });
 	}
 }

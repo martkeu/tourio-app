@@ -43,10 +43,10 @@ export default function DetailsPage() {
 	//     console.log("Deleting place ...");
 	//   }
 	/*---------------------------------------------------------------------------------
-   | Place-Delete (Daten löschen)
+   | Place Delete
    |----------------------------------------------------------------------------------
-   | - DELETE-Request an die Backend-API senden (Endpoint: /api/places/${id})
-   | - Die API löscht den Eintrag in der DB
+   | - DELETE-Request an die Backend-API (Endpoint: /api/places/${id})
+   | - Die API löscht den DB-Eintrag
    | - Redirect zur Übersichtsseite
    */
 	async function deletePlace() {
@@ -74,7 +74,7 @@ export default function DetailsPage() {
 					priority
 					fill
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-					alt=""
+					alt={`${place.name} in ${place.location}`}
 				/>
 			</ImageContainer>
 
@@ -95,6 +95,13 @@ export default function DetailsPage() {
 					Delete
 				</StyledButton>
 			</ButtonContainer>
+
+			{/*---------------------------------------------------------------------------------
+         | Kommentar-Block
+         |----------------------------------------------------------------------------------
+         | 
+         */}
+			<Comments locationName={place.name} />
 		</>
 	);
 }

@@ -17,4 +17,11 @@ export const StyledButton = styled.button`
       background-color: lightgray;
       color: red;
     `}
+
+   /* mk */
+    cursor: pointer;
+    
+    &:hover {
+      background-color: #526d21ff;
+    }
 `;

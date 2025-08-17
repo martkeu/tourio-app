@@ -9,10 +9,18 @@ import dbConnect from '@/db/connect';
 import Place from '@/db/models/Place';
 
 /*---------------------------------------------------------------------------------
-| DB-Verbindung (GET/POST-Request)
+| Routen-Handling für GET/POST-Request
 |----------------------------------------------------------------------------------
-| - GET + Place.find(): ruft alle Einträge der DB ab
-| - POST + Place.create(): erstellt einen neuen Eintrag in der DB
+| GET:
+| - Client/Frontend  : useSWR('api/places') triggert GET-Request (-->places/index.js)
+| - ServerAPI/Backend: Abrufen aller Einträge der DB mit Model.find(),
+|                      Response der Einträge im JSON-Format an den Client
+| POST:
+| - Client/Frontend  : handleAddPlace() triggert POST-Request (-->places/create.js)
+| - ServerAPI/Backend: Erstellen eines Eintrags in der DB mit Model.create(),
+|                      Response an den Client
+|
+| Status 405: Bestimmte Request-Methoden werden von der Server-Resource nicht unterstützt
 */
 export default async function handler(request, response) {
 	await dbConnect();
@@ -20,15 +28,18 @@ export default async function handler(request, response) {
 	if (request.method === 'GET') {
 		const places = await Place.find();
 
-		return response.status(200).json(places);
+      response.status(200).json(places);
+      return;
 	}
 
 	if (request.method === 'POST') {
-		const placeData = request.body;
+      const placeData = request.body;
+      
 		await Place.create(placeData);
 
-		return response.status(201).json({ status: 'Place created' });
+		response.status(201).json({ message: 'Place created' });
+      return;
 	}
 
-	response.status(405).json({ status: 'Method not allowed' });
+	response.status(405).json({ message: 'Method not allowed' });
 }

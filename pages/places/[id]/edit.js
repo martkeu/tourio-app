@@ -16,12 +16,12 @@ export default function EditPage() {
 	if (!isReady || isLoading || error) return <h2>Loading...</h2>;
 
 	/*---------------------------------------------------------------------------------
-   | Place-Update (Editierte Daten senden)
+   | Place Update
    |----------------------------------------------------------------------------------
-   | - PUT-Request an die Backend-API senden (Endpoint: /api/places/${id})
+   | - PUT-Request an die Backend-API (Endpoint: /api/places/${id})
    | - Formular-Daten als body im JSON-Format mitgeben
-   | - Die API modifiziert anhand der Daten den Eintrag in der DB
-   | - SWR-mutate() revalidiert und aktualisiert bei Änderungen die Daten (refetch)
+   | - Die API modifiziert anhand der Daten den DB-Eintrag
+   | - SWR-mutate() aktualisiert bei Änderungen die Daten (Revalidierung/Refetching)
    */
 	async function handleEditPlace(placesData) {
 		const response = await fetch(`/api/places/${id}`, {
@@ -37,7 +37,9 @@ export default function EditPage() {
 			return;
 		}
 
-		mutate();
+      mutate();
+      
+      router.push(`/places/${id}`);
 	}
 
 	return (

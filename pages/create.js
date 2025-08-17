@@ -17,11 +17,11 @@ export default function CreatePlacePage() {
 	const { mutate } = useSWR('/api/places');
 
 	/*---------------------------------------------------------------------------------
-   | Place-Create (Neue Daten senden)
+   | Place Create
    |----------------------------------------------------------------------------------
-   | - POST-Request an die Backend-API senden (Endpoint: /api/products)
+   | - POST-Request an die Backend-API (Endpoint: /api/places)
    | - Formular-Daten als body im JSON-Format mitgeben
-   | - Die API erstellt anhand der Daten einen neuen Eintrag in der DB
+   | - Die API erstellt anhand der Daten einen neuen DB-Eintrag
    | - SWR-mutate() revalidiert und aktualisiert bei Änderungen die Daten (refetch)
    */
 	async function handleAddPlace(placeData) {
